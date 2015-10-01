@@ -30,6 +30,19 @@ namespace com.yourapp.data.services
             return _context.Set<TObject>().Find(id);
         }
         /// <summary>
+        /// An overloaded Get() to retrieve a specific portion of the relation.
+        /// </summary>
+        /// <param name="id">The primary key of the object to fetch.</param>
+        /// <param name="numOfRecords">The page size.</param>
+        /// <param name="pageNumber">The page number.</param>
+        /// <returns>An ICollection of objects in range specified according to the arguments.</returns>
+        public virtual ICollection<TObject> Get(int pageNumber, int numOfRecords, Expression<Func<TObject, int>> orderBy)
+        {
+            int recordstoPass = (pageNumber - 1) * numOfRecords;
+
+            return _context.Set<TObject>().OrderBy(orderBy).Skip(recordstoPass).Take(numOfRecords).ToList();
+        }
+        /// <summary>
         /// Returns a single object with a primary key of the provided id
         /// </summary>
         /// <remarks>Asynchronous</remarks>
@@ -38,6 +51,19 @@ namespace com.yourapp.data.services
         public async Task<TObject> GetAsync(int id)
         {
             return await _context.Set<TObject>().FindAsync(id);
+        }
+        /// <summary>
+        /// An overloaded GetAsync() to retrieve a specific portion of the relation.
+        /// </summary>
+        /// <param name="id">The primary key of the object to fetch</param>
+        /// <param name="numOfRecords">The page size.</param>
+        /// <param name="pageNumber">The page number.</param>
+        /// <returns>An ICollection of objects in range specified according to the arguments.</returns>
+        public virtual async Task<ICollection<TObject>> GetAsync(int pageNumber, int numOfRecords, Expression<Func<TObject, int>> orderBy)
+        {
+            int recordstoPass = (pageNumber - 1) * numOfRecords;
+
+            return await _context.Set<TObject>().OrderBy(orderBy).Skip(recordstoPass).Take(numOfRecords).ToListAsync();
         }
         /// <summary>
         /// Gets a collection of all objects in the database
@@ -211,7 +237,7 @@ namespace com.yourapp.data.services
         }
         
         /// <summary>
-        /// Gets the count of the number of objects in the databse
+        /// Gets the count of the number of objects in the database
         /// </summary>
         /// <remarks>Synchronous</remarks>
         /// <returns>The count of the number of objects</returns>
@@ -220,7 +246,7 @@ namespace com.yourapp.data.services
             return _context.Set<TObject>().Count();
         }
         /// <summary>
-        /// Gets the count of the number of objects in the databse
+        /// Gets the count of the number of objects in the database
         /// </summary>
         /// <remarks>Asynchronous</remarks>
         /// <returns>The count of the number of objects</returns>
